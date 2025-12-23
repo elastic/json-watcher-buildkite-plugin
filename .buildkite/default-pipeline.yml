@@ -4,7 +4,7 @@ steps:
   - label: ":test_tube: Test plugin"
     command: docker run --rm -v "$PWD:/plugin:ro" buildkite/plugin-tester
     agents:
-      image: docker.elastic.co/release-eng/ubuntu-build-essential-release-eng:latest@b375f862bafb8d293a81d4878568a550f36d2689849e7476944d3158875d4714
+      image: docker.elastic.co/release-eng/ubuntu-build-essential-release-eng:latest
 
   - label: ":sparkles: Buildkite plugin Lint"
     plugins:

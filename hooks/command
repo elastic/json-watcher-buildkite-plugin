@@ -72,9 +72,9 @@ show_status() {
   elif [[ "$value" == "$target" ]]; then
     echo "  ✓ ${url}: ${value} (matches!)"
   elif [[ "$value" == "null" ]]; then
-    echo "  ⚠️  ${url}: Field not found in JSON"
+    echo "  ${url}: Field not found in JSON"
   else
-    echo "  ⏳ ${url}: ${value} (waiting for ${target})"
+    echo "  ${url}: found ${value} (expected value: ${target})"
   fi
 }
 
