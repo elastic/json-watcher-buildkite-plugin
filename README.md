@@ -135,6 +135,8 @@ Before your first commit, please run `pre-commit install` inside the repository 
 
 ### Running tests locally
 
+You will need `docker` installed.
+
 ```bash
-docker run --rm -v "$PWD:/plugin:ro" buildkite/plugin-tester
+docker run -it --rm -v "$PWD:/plugin:ro" buildkite/plugin-linter --id elastic/json-watcher
 ```
