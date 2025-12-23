@@ -2,9 +2,12 @@
 # $yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 steps:
   - label: ":test_tube: Test plugin"
-    command: docker run --rm -v "$PWD:/plugin:ro" buildkite/plugin-tester
-    agents:
-      image: docker.elastic.co/release-eng/ubuntu-build-essential-release-eng:latest
+    plugins:
+      - plugin-tester#v1.3.0:
+          folders:
+            - tests
+          version: v4.3.0
+          pull: true
 
   - label: ":sparkles: Buildkite plugin Lint"
     plugins:

@@ -127,6 +127,12 @@ steps:
 
 ## Development
 
+This repository is using `pre-commit` to automate commit hooks.
+
+It also uses `hermit` to automate provisioning of the tools required to interact with the repo. Run `. bin/activate-hermit` to activate it in your shell. This includes all the tools in the `bin`.
+
+Before your first commit, please run `pre-commit install` inside the repository directory to set up the git hook scripts.
+
 ### Running tests locally
 
 ```bash
