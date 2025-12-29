@@ -50,8 +50,6 @@ fetch_field_value() {
 
   if [[ "$http_code" == "200" ]]; then
     value=$(echo "$body" | jq -r "${FIELD}" 2>/dev/null || echo "ERROR")
-    # Strip -SNAPSHOT suffix if present
-    value="${value%-SNAPSHOT}"
     echo "$value"
   else
     echo "HTTP_${http_code}"
