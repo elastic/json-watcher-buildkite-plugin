@@ -7,7 +7,7 @@ echo "~~~ :package: JSON Watcher"
 URLS="${BUILDKITE_PLUGIN_JSON_WATCHER_URLS:-}"
 FIELD="${BUILDKITE_PLUGIN_JSON_WATCHER_FIELD:-}"
 EXPECTED_VALUE="${BUILDKITE_PLUGIN_JSON_WATCHER_EXPECTED_VALUE:-}"
-# default to 60s from plugin-info.yml
+# default to 60s from plugin.yml
 POLLING_INTERVAL="${BUILDKITE_PLUGIN_JSON_WATCHER_POLLING_INTERVAL:-60}"
 
 # Validate
@@ -27,9 +27,9 @@ if [[ -z "$EXPECTED_VALUE" ]]; then
 fi
 
 # Parse comma-separated URLs into array
-IFS=',' read -ra URLS <<< "$URLS"
+IFS=',' read -ra URLS_ARRAY <<< "$URLS"
 
-echo "Monitoring ${#URLS[@]} URL(s)"
+echo "Monitoring ${#URLS_ARRAY[@]} URL(s)"
 echo "Field: ${FIELD}"
 echo "Expected value: ${EXPECTED_VALUE}"
 echo "Polling every ${POLLING_INTERVAL}s"
@@ -72,7 +72,7 @@ show_status() {
   elif [[ "$value" == "$target" ]]; then
     echo "  ✓ ${url}: ${value} (matches!)"
   elif [[ "$value" == "null" ]]; then
-    echo "  ${url}: Field not found in JSON"
+    echo "  ❌ ${url}: Field not found in JSON"
   else
     echo "  ${url}: found ${value} (expected value: ${target})"
   fi

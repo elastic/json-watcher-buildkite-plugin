@@ -28,7 +28,6 @@ setup() {
   assert_output --partial "'field' parameter is required"
 }
 
-
 @test "Missing expected_value parameter fails" {
   export BUILDKITE_PLUGIN_JSON_WATCHER_URLS="https://example.com/test.json"
   export BUILDKITE_PLUGIN_JSON_WATCHER_FIELD=".version"
