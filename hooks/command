@@ -40,7 +40,7 @@ fetch_field_value() {
   local body
   local value
 
-  response=$(curl -sSL -w "\n%{http_code}" "${url}" 2>&1) || { echo "ERROR"; return; }
+  response=$(curl -sSL -w "\n%{http_code}" "${url}") || { echo "ERROR"; return; }
 
   http_code=$(echo "$response" | tail -n1)
   body=$(echo "$response" | sed '$d')
