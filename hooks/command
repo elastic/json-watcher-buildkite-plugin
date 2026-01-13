@@ -4,15 +4,15 @@ set -euo pipefail
 echo "~~~ :package: JSON Watcher"
 
 # Configuration
-URLS="${BUILDKITE_PLUGIN_JSON_WATCHER_URLS:-}"
+URL="${BUILDKITE_PLUGIN_JSON_WATCHER_URL:-}"
 FIELD="${BUILDKITE_PLUGIN_JSON_WATCHER_FIELD:-}"
 EXPECTED_VALUE="${BUILDKITE_PLUGIN_JSON_WATCHER_EXPECTED_VALUE:-}"
 # default to 60s from plugin.yml
 POLLING_INTERVAL="${BUILDKITE_PLUGIN_JSON_WATCHER_POLLING_INTERVAL:-60}"
 
 # Validate
-if [[ -z "$URLS" ]]; then
-  echo "Error: 'urls' parameter is required"
+if [[ -z "$URL" ]]; then
+  echo "Error: 'url' parameter is required"
   exit 1
 fi
 
@@ -26,10 +26,7 @@ if [[ -z "$EXPECTED_VALUE" ]]; then
   exit 1
 fi
 
-# Parse comma-separated URLs into array
-IFS=',' read -ra URLS_ARRAY <<< "$URLS"
-
-echo "Monitoring ${#URLS_ARRAY[@]} URL(s)"
+echo "Monitoring URL: ${URL}"
 echo "Field: ${FIELD}"
 echo "Expected value: ${EXPECTED_VALUE}"
 echo "Polling every ${POLLING_INTERVAL}s"
@@ -58,42 +55,30 @@ fetch_field_value() {
 
 # Status display
 show_status() {
-  local url="$1"
-  local value="$2"
-  local target="$3"
+  local value="$1"
+  local target="$2"
 
   if [[ "$value" == "ERROR" ]]; then
-    echo "  ❌ ${url}: Connection error"
+    echo "  ❌ Connection error"
   elif [[ "$value" =~ ^HTTP_ ]]; then
     local code="${value##HTTP_}"
-    echo "  ❌ ${url}: HTTP status ${code}"
+    echo "  ❌ HTTP status ${code}"
   elif [[ "$value" == "$target" ]]; then
-    echo "  ✓ ${url}: ${value} (matches!)"
+    echo "  ✓ ${value} (matches!)"
   elif [[ "$value" == "null" ]]; then
-    echo "  ❌ ${url}: Field not found in JSON"
+    echo "  ❌ Field not found in JSON"
   else
-    echo "  ${url}: found ${value} (expected value: ${target})"
+    echo "  Found ${value} (expected value: ${target})"
   fi
 }
 
 while true; do
-  all_matched=true
+  value=$(fetch_field_value "$URL")
+  show_status "$value" "$EXPECTED_VALUE"
 
-  for url in "${URLS[@]}"; do
-    # Trim whitespace
-    url=$(echo "$url" | xargs)
-
-    value=$(fetch_field_value "$url")
-    show_status "$url" "$value" "$EXPECTED_VALUE"
-
-    if [[ "$value" != "$EXPECTED_VALUE" ]]; then
-      all_matched=false
-    fi
-  done
-
-  if [[ "$all_matched" == "true" ]]; then
+  if [[ "$value" == "$EXPECTED_VALUE" ]]; then
     echo ""
-    echo "✓ Success! All URLs have ${FIELD}=${EXPECTED_VALUE}"
+    echo "✓ Success! ${FIELD}=${EXPECTED_VALUE}"
     exit 0
   fi
 

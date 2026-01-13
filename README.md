@@ -22,7 +22,7 @@ steps:
   - label: "Wait for JSON file"
     plugins:
       - elastic/json-watcher#v1.0.0:
-          urls: "https://example.com/myfile_version.json"
+          url: "https://example.com/myfile_version.json"
           field: ".version"
           expected_value: "9.2.4"
           polling_interval: 30 # optional, defaults to 60
@@ -32,29 +32,27 @@ steps:
 
 ```bash
 ~~~ :package: JSON Watcher
-Monitoring 1 URL(s)
+Monitoring URL: https://example.com/myfile_version.json
 Field: .version
 Expected value: 9.2.4
 Polling every 30s
-✓ https://example.com/myfile_version.json: 9.2.4 (matches!)
+
+  ✓ 9.2.4 (matches!)
+
+✓ Success! .version=9.2.4
+
 ```
 
 ### Required input
 
-- #### `urls` (string)
+- #### `url` (string)
 
-  One or more URLs to poll for JSON data. Multiple URLs should be comma-separated.
+  A single URL to poll for JSON data.
 
   **Example:**
 
   ```
-  urls: "https://api.example.com/status.json"
-  ```
-
-  **Multiple URLs:**
-
-  ```
-  urls: "https://api1.example.com/v1.json,https://api2.example.com/v2.json"
+  url "https://api.example.com/status.json"
   ```
 
 - #### `field` (string)
@@ -95,7 +93,7 @@ steps:
   - label: "Wait for JSON file"
     plugins:
       - elastic/json-watcher#v1.0.0:
-          urls: "${URLS}"
+          url: "${URL}"
           field: "${FIELD}"
           expected_value: "${EXPECTED_VALUE}"
 ```
@@ -107,22 +105,10 @@ steps:
   - label: "Wait for expected value in JSON metadata file"
     plugins:
       - elastic/json-watcher#v1.0.0:
-          urls: "https://api.k8s.example.com/deployments/my-app/status.json"
+          url: "https://api.k8s.example.com/deployments/my-app/status.json"
           field: ".status"
           expected_value: "ready"
           polling_interval: 15
-```
-
-- ### 3. Check multiple URLs
-
-```yaml
-steps:
-  - label: "Wait for multiple JSON files"
-    plugins:
-      - elastic/json-watcher#v1.0.0:
-          urls: "https://us-east.api.example.com/status.json,https://eu-west.api.example.com/status.json"
-          field: ".version"
-          expected_value: "some-version-here"
 ```
 
 ## Development
@@ -137,6 +123,14 @@ Before your first commit, please run `pre-commit install` inside the repository 
 
 You will need `docker` installed.
 
+Runs the plugin-linter against the plugin
+
 ```bash
 docker run -it --rm -v "$PWD:/plugin:ro" buildkite/plugin-linter --id elastic/json-watcher
+```
+
+Runs the plugin-tester against the commands.bats
+
+```bash
+docker run -it --rm -v "$PWD:/plugin:ro" buildkite/plugin-tester:v4.3.0
 ```

@@ -16,11 +16,11 @@ configuration:
       type: number
       description: The polling interval in seconds for the curl
       default: 60
-    urls:
+    url:
       type: string
-      description: One or more URLs to poll (comma-separated if multiple)
+      description: A single URL to poll for JSON data
   required:
     - expected_value
     - field
-    - urls
+    - url
   additionalProperties: false

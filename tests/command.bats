@@ -8,18 +8,18 @@ setup() {
   # export JQ_STUB_DEBUG=/dev/tty
 }
 
-@test "Missing urls parameter fails" {
+@test "Missing url parameter fails" {
   export BUILDKITE_PLUGIN_JSON_WATCHER_FIELD=".version"
   export BUILDKITE_PLUGIN_JSON_WATCHER_EXPECTED_VALUE="1.0.0"
 
   run "$PWD"/hooks/command
 
   assert_failure 1
-  assert_output --partial "'urls' parameter is required"
+  assert_output --partial "'url' parameter is required"
 }
 
 @test "Missing field parameter fails" {
-  export BUILDKITE_PLUGIN_JSON_WATCHER_URLS="https://example.com/test.json"
+  export BUILDKITE_PLUGIN_JSON_WATCHER_URL="https://example.com/test.json"
   export BUILDKITE_PLUGIN_JSON_WATCHER_EXPECTED_VALUE="1.0.0"
 
   run "$PWD"/hooks/command
@@ -29,7 +29,7 @@ setup() {
 }
 
 @test "Missing expected_value parameter fails" {
-  export BUILDKITE_PLUGIN_JSON_WATCHER_URLS="https://example.com/test.json"
+  export BUILDKITE_PLUGIN_JSON_WATCHER_URL="https://example.com/test.json"
   export BUILDKITE_PLUGIN_JSON_WATCHER_FIELD=".version"
   export BUILDKITE_PLUGIN_JSON_WATCHER_POLLING_INTERVAL=60
 
