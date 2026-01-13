@@ -45,7 +45,7 @@ fetch_field_value() {
   http_code=$(echo "$response" | tail -n1)
   body=$(echo "$response" | sed '$d')
 
-  if [[ "$http_code" == "200" ]]; then
+  if [[ "$http_code" -eq 200 ]]; then
     value=$(echo "$body" | jq -r "${FIELD}" 2>/dev/null || echo "ERROR")
     echo "$value"
   else
