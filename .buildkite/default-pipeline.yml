@@ -1,19 +1,19 @@
 ---
 # $yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 steps:
+  - label: ":sparkles: Buildkite plugin Lint"
+    plugins:
+      - plugin-linter#v3.3.0:
+          id: elastic/json-watcher
+    agents:
+      provider: "gcp"
+      image: family/core-ubuntu-2204
   - label: ":test_tube: Test plugin"
     plugins:
       - plugin-tester#v1.3.0:
           folders:
             - tests
           version: v4.3.0
-    agents:
-      provider: "gcp"
-      image: family/core-ubuntu-2204
-  - label: ":sparkles: Buildkite plugin Lint"
-    plugins:
-      - plugin-linter#v3.3.0:
-          id: elastic/json-watcher
     agents:
       provider: "gcp"
       image: family/core-ubuntu-2204
