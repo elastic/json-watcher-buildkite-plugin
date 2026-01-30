@@ -7,7 +7,6 @@ steps:
           folders:
             - tests
           version: v4.3.0
-          pull: true
     agents:
       provider: "gcp"
       image: family/core-ubuntu-2204
