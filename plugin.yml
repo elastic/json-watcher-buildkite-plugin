@@ -1,0 +1,26 @@
+name: "JSON Watcher Buildkite Plugin"
+description: Simple buildkite plugin to watch for a specific field in a JSON file
+author: https://github.com/ninalee12
+requirements:
+  - jq
+  - curl
+configuration:
+  properties:
+    expected_value:
+      type: string
+      description: The expected value for the JSON field
+    field:
+      type: string
+      description: The jq path to the field (e.g., ".version" or ".app.name.version")
+    polling_interval:
+      type: number
+      description: The polling interval in seconds for the curl
+      default: 60
+    url:
+      type: string
+      description: A single URL to poll for JSON data
+  required:
+    - expected_value
+    - field
+    - url
+  additionalProperties: false

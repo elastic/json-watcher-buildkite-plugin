@@ -1,0 +1,87 @@
+#!/bin/bash
+set -euo pipefail
+
+echo "~~~ :package: JSON Watcher"
+
+# Configuration
+URL="${BUILDKITE_PLUGIN_JSON_WATCHER_URL:-}"
+FIELD="${BUILDKITE_PLUGIN_JSON_WATCHER_FIELD:-}"
+EXPECTED_VALUE="${BUILDKITE_PLUGIN_JSON_WATCHER_EXPECTED_VALUE:-}"
+# default to 60s from plugin.yml
+POLLING_INTERVAL="${BUILDKITE_PLUGIN_JSON_WATCHER_POLLING_INTERVAL:-60}"
+
+# Validate
+if [[ -z "$URL" ]]; then
+  echo "Error: 'url' parameter is required"
+  exit 1
+fi
+
+if [[ -z "$FIELD" ]]; then
+  echo "Error: 'field' parameter is required"
+  exit 1
+fi
+
+if [[ -z "$EXPECTED_VALUE" ]]; then
+  echo "Error: 'expected_value' parameter is required"
+  exit 1
+fi
+
+echo "Monitoring URL: ${URL}"
+echo "Field: ${FIELD}"
+echo "Expected value: ${EXPECTED_VALUE}"
+echo "Polling every ${POLLING_INTERVAL}s"
+echo ""
+
+# Fetch and extract field value
+fetch_field_value() {
+  local url="$1"
+  local response
+  local http_code
+  local body
+  local value
+
+  response=$(curl -sSL -w "\n%{http_code}" "${url}") || { echo "ERROR"; return; }
+
+  http_code=$(echo "$response" | tail -n1)
+  body=$(echo "$response" | sed '$d')
+
+  if [[ "$http_code" -eq 200 ]]; then
+    value=$(echo "$body" | jq -r "${FIELD}" 2>/dev/null || echo "ERROR")
+    echo "$value"
+  else
+    echo "HTTP_${http_code}"
+  fi
+}
+
+# Status display
+show_status() {
+  local value="$1"
+  local target="$2"
+
+  if [[ "$value" == "ERROR" ]]; then
+    echo "  ❌ Connection error"
+  elif [[ "$value" =~ ^HTTP_ ]]; then
+    local code="${value##HTTP_}"
+    echo "  ❌ HTTP status ${code}"
+  elif [[ "$value" == "$target" ]]; then
+    echo "  ✓ ${value} (matches!)"
+  elif [[ "$value" == "null" ]]; then
+    echo "  ❌ Field not found in JSON"
+  else
+    echo "  Found ${value} (expected value: ${target})"
+  fi
+}
+
+while true; do
+  value=$(fetch_field_value "$URL")
+  show_status "$value" "$EXPECTED_VALUE"
+
+  if [[ "$value" == "$EXPECTED_VALUE" ]]; then
+    echo ""
+    echo "✓ Success! ${FIELD}=${EXPECTED_VALUE}"
+    exit 0
+  fi
+
+  echo ""
+  sleep "$POLLING_INTERVAL"
+done
