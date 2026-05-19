@@ -12,7 +12,7 @@ metadata:
 
 spec:
   type: buildkite-pipeline
-  owner: group:release-eng
+  owner: group:artifact-management
   system: buildkite
   implementation:
     apiVersion: buildkite.elastic.dev/v1
@@ -26,7 +26,7 @@ spec:
       provider_settings:
         build_pull_request_forks: true
       teams:
-        release-eng:
+        artifact-management:
           access_level: MANAGE_BUILD_AND_READ
         everyone:
           access_level: READ_ONLY
